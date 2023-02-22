@@ -26,4 +26,7 @@ public interface MessageType {
     //群发消息
     String MESSAGE_TO_ALL_MES = "6";
 
+    //发送文件
+    String MESSAGE_FILE_MES = "7";
+
 }

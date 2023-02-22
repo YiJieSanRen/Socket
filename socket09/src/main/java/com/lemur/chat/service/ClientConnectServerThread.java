@@ -6,6 +6,7 @@ import lombok.Getter;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
+import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
@@ -54,6 +55,14 @@ public class ClientConnectServerThread extends Thread {
 //                    System.out.println("\n" + message.getSender() + "对" + message.getReceiver() + "说：" + message.getContent());
                 } else if (MessageType.MESSAGE_TO_ALL_MES.equals(message.getMesType())) {
                     System.out.println("\n" + message.getSender() + "对大家说：" + message.getContent());
+                } else if (MessageType.MESSAGE_FILE_MES.equals(message.getMesType())) {
+                    System.out.println("\n" + message.getSender() + "给你发送了一个文件");
+
+                    //取出message的文件字节数组，通过文件输出流写到磁盘
+                    FileOutputStream fileOutputStream = new FileOutputStream(message.getDest());
+                    fileOutputStream.write(message.getFileBytes());
+                    fileOutputStream.close();
+                    System.out.println("保存成功");
                 }
             } catch (Exception e) {
                 e.printStackTrace();

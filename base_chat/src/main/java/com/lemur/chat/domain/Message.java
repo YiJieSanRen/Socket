@@ -30,4 +30,16 @@ public class Message implements Serializable {
 
     //发送时间
     private String sendTime;
+
+    //收发文件
+    private byte[] fileBytes;
+
+    //文件大小
+    private int fileLen = 0;
+
+    //文件目的地址
+    private String dest;
+
+    //文件源地址
+    private String src;
 }

@@ -60,8 +60,7 @@ public class ServerConnectClientThread extends Thread {
                     //私聊
                     log.debug("用户" + message.getSender() + "给用户" + message.getReceiver() + "发送了一条消息");
                     ServerConnectClientThread serverConnectClientThread = ManageServerConnectClientThread.getServerConnectClientThread(message.getReceiver());
-                    Socket socket = serverConnectClientThread.getSocket();
-                    sendMess(socket, message);
+                    sendMess(serverConnectClientThread.getSocket(), message);
                 } else if (MessageType.MESSAGE_TO_ALL_MES.equals(message.getMesType())) {
                     //群聊
                     log.debug("用户" + message.getSender() +"发送了一条群聊消息");
@@ -73,8 +72,13 @@ public class ServerConnectClientThread extends Thread {
                             sendMess(serverConnectClientThread.getSocket(), message);
                         }
                     }
+                } else if (MessageType.MESSAGE_FILE_MES.equals(message.getMesType())) {
+                    //发送文件
+                    log.debug("用户" + message.getSender() + "给用户" + message.getReceiver() + "发送了一个文件");
+                    ServerConnectClientThread serverConnectClientThread = ManageServerConnectClientThread.getServerConnectClientThread(message.getReceiver());
+                    sendMess(serverConnectClientThread.getSocket(), message);
                 } else {
-                    log.debug("消息未识别，不做处理！");
+                    log.debug("消息未识别！");
                 }
             } catch (Exception e) {
                 e.printStackTrace();

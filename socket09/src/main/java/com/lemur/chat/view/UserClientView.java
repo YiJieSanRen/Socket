@@ -1,7 +1,8 @@
 package com.lemur.chat.view;
 
-import com.lemur.chat.service.MessageClientService;
-import com.lemur.chat.service.UserClientService;
+import com.lemur.chat.service.impl.FileClientService;
+import com.lemur.chat.service.impl.MessageClientService;
+import com.lemur.chat.service.impl.UserClientService;
 import com.lemur.chat.utils.Utility;
 
 /**
@@ -20,6 +21,9 @@ public class UserClientView {
 
     //用于消息的交互
     private final MessageClientService messageClientService = new MessageClientService();
+
+    //用于文件交互
+    private final FileClientService fileClientService = new FileClientService();
 
     //显示主菜单
     public UserClientView() {
@@ -62,19 +66,26 @@ public class UserClientView {
                                 case "2":
                                     //System.out.println("群发消息");
                                     System.out.println("发送群聊消息：");
-                                    String mes = Utility.readString(500);
-                                    messageClientService.sendMessageToAll(mes, userName);
+                                    String content = Utility.readString(500);
+                                    messageClientService.sendMessageToAll(content, userName);
                                     break;
                                 case "3":
                                     //System.out.println("私聊消息");
                                     System.out.print("请输入用户名(在线)：");
                                     String receiver = Utility.readString(50);
                                     System.out.println("发送消息：");
-                                    String content = Utility.readString(500);
+                                    content = Utility.readString(500);
                                     messageClientService.sendMessageToOne(content, userName, receiver);
                                     break;
                                 case "4":
-                                    System.out.println("发送文件");
+                                    System.out.print("请输入用户名(在线)：");
+                                    receiver = Utility.readString(50);
+                                    System.out.println("请输入需要发送的文件路径：");
+                                    String src = Utility.readString(100);
+                                    System.out.println("请输入需要保存到的文件路径：");
+                                    String dest = Utility.readString(100);
+                                    fileClientService.sendFileToOne(src, dest, userName, receiver);
+                                    //System.out.println("发送文件");
                                     break;
                                 case "9":
                                     userClientService.logout();

@@ -1,8 +1,9 @@
-package com.lemur.chat.service;
+package com.lemur.chat.service.impl;
 
 import com.lemur.chat.domain.Message;
 import com.lemur.chat.domain.MessageType;
-import com.lemur.chat.domain.SendMessageBuilder;
+import com.lemur.chat.builder.SendMessageBuilder;
+import com.lemur.chat.service.BaseService;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -11,9 +12,7 @@ import java.net.Socket;
 /**
  * 消息发送
  */
-public class MessageClientService {
-
-    private String sender;
+public class MessageClientService extends BaseService {
 
     /**
      * 群聊
@@ -42,22 +41,6 @@ public class MessageClientService {
         System.out.println(sender + "对" + receiver + "说：" + content);
         //发送给服务端
         sendMess(message);
-    }
-
-    private void sendMess(Message message) {
-        try {
-            //从管理线程的集合中，通过user得到这个线程
-            ClientConnectServerThread clientConnectServerThread = ManageClientConnectServerThread.getClientConnectServerThread(sender);
-            //通过线程得到关联的socket
-            Socket socket = clientConnectServerThread.getSocket();
-            //发送给服务器
-            //得到当前线程的Socket 对应的 ObjectOutputStream 对象
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
     }
 
 }

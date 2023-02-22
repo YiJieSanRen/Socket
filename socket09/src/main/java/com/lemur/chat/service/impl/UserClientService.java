@@ -1,9 +1,12 @@
-package com.lemur.chat.service;
+package com.lemur.chat.service.impl;
 
 import com.lemur.chat.domain.Message;
 import com.lemur.chat.domain.MessageType;
-import com.lemur.chat.domain.SendMessageBuilder;
+import com.lemur.chat.builder.SendMessageBuilder;
 import com.lemur.chat.domain.User;
+import com.lemur.chat.service.BaseService;
+import com.lemur.chat.service.ClientConnectServerThread;
+import com.lemur.chat.service.ManageClientConnectServerThread;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,10 +17,9 @@ import java.net.Socket;
 /**
  * 完成用户登录验证和用户注册等功能
  */
-public class UserClientService {
+public class UserClientService extends BaseService {
 
     private final User user = new User();
-
 
     private Socket socket;
 
@@ -48,6 +50,7 @@ public class UserClientService {
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             Message message = (Message) ois.readObject();
             if (MessageType.MESSAGE_LOGIN_SUCCESS.equals(message.getMesType())) {
+                this.sender = user.getUserName();
 
                 //创建一个和服务器端保持通信的线程 -> 创建一个类 ClientConnectServerThread
                 ClientConnectServerThread clientConnectServerThread = new ClientConnectServerThread(socket, user.getUserName());
@@ -85,21 +88,5 @@ public class UserClientService {
         Message message = new SendMessageBuilder(MessageType.MESSAGE_CLIENT_EXIT).setSender(user.getUserName()).build();
         sendMess(message);
         System.exit(0);
-    }
-
-    private void sendMess(Message message) {
-        try {
-            //从管理线程的集合中，通过user得到这个线程
-            ClientConnectServerThread clientConnectServerThread = ManageClientConnectServerThread.getClientConnectServerThread(user.getUserName());
-            //通过线程得到关联的socket
-            Socket socket = clientConnectServerThread.getSocket();
-            //发送给服务器
-            //得到当前线程的Socket 对应的 ObjectOutputStream 对象
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
     }
 }
